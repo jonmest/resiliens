@@ -3,7 +3,7 @@ from time import sleep
 from unittest.mock import Mock, patch
 from pytest import raises
 
-from src.resilience4py.circuit_breaker import CircuitBreaker, CircuitBreakerManager, CircuitBreakerException, CircuitBreakerStatus
+from src.resiliens.circuit_breaker import CircuitBreaker, CircuitBreakerManager, CircuitBreakerException, CircuitBreakerStatus
 
 
 def fake_successful_http_call():

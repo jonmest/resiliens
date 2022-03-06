@@ -8,10 +8,10 @@ from time import monotonic
 from types import TracebackType
 from typing import Union, Callable, Optional, Type, Any
 
-from src.resilience4py.circuit_breaker.CircuitBreakerException import CircuitBreakerException
-from src.resilience4py.circuit_breaker.manager.CircuitBreakerManager import CircuitBreakerManager
-from src.resilience4py.circuit_breaker.CircuitBreakerState import CircuitBreakerState
-from src.resilience4py.circuit_breaker.CircuitBreakerStatus import CircuitBreakerStatus
+from src.resiliens.circuit_breaker.CircuitBreakerException import CircuitBreakerException
+from src.resiliens.circuit_breaker.manager.CircuitBreakerManager import CircuitBreakerManager
+from src.resiliens.circuit_breaker.CircuitBreakerState import CircuitBreakerState
+from src.resiliens.circuit_breaker.CircuitBreakerStatus import CircuitBreakerStatus
 
 
 class CircuitBreaker:

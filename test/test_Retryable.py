@@ -1,7 +1,7 @@
 #  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
 import unittest
 
-from src.resilience4py.retryable.Retryable import Retryable
+from src.resiliens.retryable.Retryable import Retryable
 
 
 class TestRetryable(unittest.TestCase):

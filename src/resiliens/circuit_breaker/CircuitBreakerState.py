@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from src.resilience4py.circuit_breaker.CircuitBreakerStatus import CircuitBreakerStatus
+from src.resiliens.circuit_breaker.CircuitBreakerStatus import CircuitBreakerStatus
 
 
 class CircuitBreakerState:

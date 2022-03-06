@@ -1,7 +1,7 @@
 import unittest
 
-from src.resilience4py.circuit_breaker import CircuitBreaker
-from src.resilience4py.circuit_breaker import CircuitBreakerStatus
+from src.resiliens.circuit_breaker import CircuitBreaker
+from src.resiliens.circuit_breaker import CircuitBreakerStatus
 
 
 class TestCircuitBreaker(unittest.TestCase):
