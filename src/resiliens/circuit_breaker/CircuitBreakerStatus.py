@@ -18,9 +18,7 @@ class _CircuitBreakerStatus:
         return self._HALF_OPEN
 
     def is_valid_status(self, status: str):
-        return status == self._OPEN or \
-               status == self._HALF_OPEN or \
-               status == self._CLOSED
+        return status in (self._OPEN, self._HALF_OPEN, self._CLOSED)
 
 
 CircuitBreakerStatus = _CircuitBreakerStatus()
