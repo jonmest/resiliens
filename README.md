@@ -3,6 +3,12 @@ A small Python library of decorators to help make your application more resilien
 1. Retryable
 2. CircuitBreaker
 
+## Installation
+Built for Python >=3.6
+```bash
+pip install Resiliens
+```
+
 ## 1. Retryable
 You can use the `@Retryable` decorator on any function to automatically retry calling it in case it throws an exception. One use-case would be if you make a remote call to an external API which returns the HTTP status code 500. Maybe it's just a very temporary issue, in which case you might as well try a few more times.
 
