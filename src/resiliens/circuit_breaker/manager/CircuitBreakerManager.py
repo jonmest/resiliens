@@ -1,8 +1,5 @@
 #  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
 
-from typing import Iterable
-
-
 class CircuitBreakerManager(object):
     circuit_breakers = {}
 
@@ -19,29 +16,29 @@ class CircuitBreakerManager(object):
         return cls.circuit_breakers.values()
 
     @classmethod
-    def get(cls, name: str) -> "CircuitBreaker":
+    def get(cls, name: str):
         return cls.circuit_breakers.get(name)
 
     @classmethod
-    def get_open(cls) -> Iterable["CircuitBreaker"]:
+    def get_open(cls):
         for circuit in cls.get_circuits():
             if circuit.opened:
                 yield circuit
 
     @classmethod
-    def get_closed(cls) -> Iterable["CircuitBreaker"]:
+    def get_closed(cls):
         for circuit in cls.get_circuits():
             if circuit.closed:
                 yield circuit
 
     @classmethod
     def force_open(cls, name: str) -> None:
-        circuit_breaker: "CircuitBreaker" = cls.circuit_breakers.get(name)
+        circuit_breaker = cls.circuit_breakers.get(name)
         circuit_breaker.force_open()
 
     @classmethod
     def force_reset(cls, name: str) -> None:
-        circuit_breaker: "CircuitBreaker" = cls.circuit_breakers.get(name)
+        circuit_breaker = cls.circuit_breakers.get(name)
         circuit_breaker.force_reset()
 
     @classmethod
