@@ -3,6 +3,8 @@ A small Python library of decorators to help make your application more resilien
 1. Retryable
 2. CircuitBreaker
 
+The documentation here will be brief, but hopefully you'll be able to make sense of it by reading the docstrings.
+
 [![Build, lint and test](https://github.com/jonmest/resiliens/actions/workflows/python-package.yml/badge.svg)](https://github.com/jonmest/resiliens/actions/workflows/python-package.yml)
 [![DeepSource](https://deepsource.io/gh/jonmest/resiliens.svg/?label=active+issues&show_trend=true&token=03a2Qus_Z4mOopqLDJ2yMqdp)](https://deepsource.io/gh/jonmest/resiliens/?ref=repository-badge)
 ## Installation
@@ -34,7 +36,8 @@ def get_github():
 ## 2. CircuitBreaker
 If you make a remote call, and it keeps failing, you may want to stop making this call to save your API usage quota or lower the response time of something that would be failing anyway. In that case, a circuit breaker comes handy.
 
-Currently, this decorator stops calling the decorated function after a configured number of failures in a row (the circuit breaker "opens") and just returns the most recent exception instead. After a wait period, the circuit breaker allows new calls to the decorated function.
+Currently, this decorator stops calling the decorated function after a configured number of failures in a row (the circuit breaker "opens") and immediately returns the most recent exception instead. After a wait period, the circuit breaker allows new calls to the decorated function. You can also supply the optional argument `sliding_window_length` - then the circuit breaker will keep a sliding window of the most recent results in a list. If the number of failures in the sliding window reach the `max_attempts` threshold, the circuit breaker will open.
+
 ```python
 @CircuitBreaker
 def get_github():
