@@ -1,6 +1,8 @@
 #  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
 
+
 class CircuitBreakerException(Exception):
+
     def __init__(self, circuit_breaker, *args):
         super(CircuitBreakerException, self).__init__(*args)
         self._circuit_breaker = circuit_breaker

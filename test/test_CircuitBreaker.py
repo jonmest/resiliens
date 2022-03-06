@@ -15,7 +15,8 @@ class TestCircuitBreaker(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    def test_circuitBreakerIsGivenMaxAttempts_getMaxAttemptsProperty_returnsRightMaxAttempts(self):
+    def test_circuitBreakerIsGivenMaxAttempts_getMaxAttemptsProperty_returnsRightMaxAttempts(
+            self):
         self.circuit_breaker = CircuitBreaker(max_attempts=100)
 
         expected = 100
@@ -30,4 +31,3 @@ class TestCircuitBreaker(unittest.TestCase):
         actual = self.circuit_breaker.status
 
         self.assertEqual(expected, actual)
-
