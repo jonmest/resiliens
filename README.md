@@ -1,7 +1,7 @@
 # Resiliens
 A small Python library of decorators to help make your application more resilient. Currently, there are two decorators provided:
-1. Retryable
-2. CircuitBreaker
+1. Retryable - automatically re-calls the wrapped function if an exception is raised.
+2. CircuitBreaker - prevent calls to the wrapped function if it is known to currently be failing.
 
 The documentation here will be brief, but hopefully you'll be able to make sense of it by reading the docstrings.
 
