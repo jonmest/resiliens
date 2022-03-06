@@ -1,0 +1,83 @@
+#  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
+import time
+from datetime import datetime
+from functools import wraps
+from inspect import isgeneratorfunction
+from typing import Callable, Type, Any, Union
+
+
+class Retryable:
+
+    max_retries: int
+    backoff: Union[int, float]
+    backoff_exponent: Union[int, float]
+    fallback_function: Callable
+
+    _current_attempts: int
+    _last_failure: Exception
+
+    def __init__(self, max_retries: int = 3, backoff: Union[int, float] = 1000,
+                 backoff_multiplier: Union[int, float] = None,
+                 fallback_function: Callable = None,
+                 expected_exception: Type[BaseException] = Exception):
+        """
+
+        :param max_retries: Max number of retries until it should give up.
+        :param backoff: Backoff time in MILLISECONDS. If you don't set a backoff_exponent, this
+        will be constant (e.g. 1000 milliseconds for all retries). If you do set a backoff_exponent,
+        the backoff time will increase for every retry.
+        :param backoff_exponent: Exponent to make the backoff time increase for every attempt
+        (backoff * (retry_count ** backoff_exponent)). Say you set it to 2. On the second attempt,
+        the backoff time will be multiplied with 2. On the fourth attempt, the backoff time will be multiplied with 8.
+        :param fallback_function: Fallback function to get called in case the max retries limit has been reached. Optional,
+        if not set the last exception will just get thrown.
+        :param expected_exception: For what exceptions should we attempt to retry? Default is any exception, but you may
+        want this to be more fine-grained (e.g. ConnectionError, RequestException)
+        """
+        self.max_retries = max_retries
+        self.backoff = backoff / 1000  # Milliseconds to seconds
+        self.fallback_function = fallback_function
+        self._current_attempts = 0
+        self.backoff_exponent = backoff_multiplier
+        self._expected_exception = expected_exception
+
+    def __call__(self, decorated_function):
+        return self.decorate(decorated_function)
+
+    def call(self, func, *args, **kwargs) -> Any:
+        return func(*args, **kwargs)
+
+    def call_generator(self, func, *args, **kwargs):
+        for el in func(*args, **kwargs):
+            yield el
+
+    def get_backoff_time(self):
+        if self.backoff_exponent:
+            return max(self._current_attempts ** self.backoff_exponent, 1) * self.backoff
+        else:
+            return self.backoff
+
+    def decorate(self, function_to_decorate) -> Callable:
+        if isgeneratorfunction(function_to_decorate):
+            call = self.call_generator
+        else:
+            call = self.call
+
+        @wraps(function_to_decorate)
+        def wrapper(*args, **kwargs):
+            self.retry_if_needed(call, function_to_decorate, *args, **kwargs)
+
+        return wrapper
+
+    def retry_if_needed(self, call, function_to_decorate, *args, **kwargs):
+        while self._current_attempts < self.max_retries:
+            try:
+                return call(function_to_decorate, *args, **kwargs)
+            except Exception as e:
+                if issubclass(e.__class__, self._expected_exception):
+                    self._current_attempts += 1
+                    self._last_failure = e
+                    if self._current_attempts < self.max_retries:
+                        time.sleep(self.get_backoff_time())
+                else:
+                    raise e
