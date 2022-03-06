@@ -1,3 +1,4 @@
+import time
 import unittest
 
 from src.resiliens.circuit_breaker import CircuitBreaker
@@ -27,15 +28,32 @@ class TestCircuitBreaker(unittest.TestCase):
         raise Exception()
 
     def test_slidingWindow50Percent_circuitBreakerOpensAfter5Failures(self):
+        should_fail = True
+        reset_time = 1000
+
+        @CircuitBreaker(max_attempts=self.MAX_ATTEMPTS, reset_timeout=reset_time, sliding_window_length=self.WINDOW_SIZE)
+        def test_func():
+            if should_fail:
+                self.failed_count += 1
+                raise Exception()
+            self.successful_count += 1
+
         for i in range(0, self.MAX_ATTEMPTS * 2):
             try:
-                self.fake_failed_http_call()
+                test_func()
             except Exception as ignored:
                 pass
         expected = self.MAX_ATTEMPTS
         actual = self.failed_count
         self.assertEqual(expected, actual)
 
+        should_fail = False
+        time.sleep(reset_time/1000)
+
+        test_func()
+        expected = 1
+        actual = self.successful_count
+        self.assertEqual(expected, actual)
 
     def test_circuitBreakerIsGivenName_getNameProperty_returnsRightName(self):
         self.circuit_breaker = CircuitBreaker(name="CB1")
@@ -60,4 +78,3 @@ class TestCircuitBreaker(unittest.TestCase):
         actual = self.circuit_breaker.status
 
         self.assertEqual(expected, actual)
-
