@@ -9,6 +9,7 @@ from types import TracebackType
 from typing import Union, Callable, Optional, Type, Any
 
 from src.resiliens.circuit_breaker.CircuitBreakerException import CircuitBreakerException
+from src.resiliens.circuit_breaker.SlidingWindow import SlidingWindow
 from src.resiliens.circuit_breaker.manager.CircuitBreakerManager import CircuitBreakerManager
 from src.resiliens.circuit_breaker.CircuitBreakerState import CircuitBreakerState
 from src.resiliens.circuit_breaker.CircuitBreakerStatus import CircuitBreakerStatus
@@ -20,10 +21,12 @@ class CircuitBreakerClass:
     _expected_exception: Type[BaseException]
     _fallback_function: Callable
     _fallback_function_with_exception: Callable
+    _sliding_window: SlidingWindow
 
     def __init__(self,
                  max_attempts: int = 5,
                  reset_timeout: Union[float, int] = 20_000,
+                 sliding_window_length: int = None,
                  expected_exception: Type[BaseException] = Exception,
                  name: str = None,
                  fallback_function: Callable = None,
@@ -55,6 +58,8 @@ class CircuitBreakerClass:
         self._fallback_function = fallback_function
         self._fallback_function_with_exception = fallback_function_with_exception
         self._name = name
+        if sliding_window_length:
+            self._sliding_window = SlidingWindow(sliding_window_length)
 
     @property
     def status(self):
@@ -156,10 +161,17 @@ class CircuitBreakerClass:
         self._state.status = CircuitBreakerStatus.CLOSED
         self._state.last_failure = None
         self._state.fail_count = 0
+        if self._sliding_window:
+            self._sliding_window.add(False)
 
     def __call_failed(self) -> None:
         self._state.fail_count += 1
-        if self._state.fail_count >= self._max_attempts:
+        if self._sliding_window:
+            self._sliding_window.add(False)
+            if self._sliding_window.get_failure_count() >= self._max_attempts:
+                self._state.status = CircuitBreakerStatus.OPEN
+                self._state.opened = monotonic()
+        elif self._state.fail_count >= self._max_attempts:
             self._state.status = CircuitBreakerStatus.OPEN
             self._state.opened = monotonic()
 
@@ -176,6 +188,7 @@ class CircuitBreakerClass:
 
 def CircuitBreaker(max_attempts: int = 5,
                    reset_timeout: Union[float, int] = 20_000,
+                   sliding_window_length: int = None,
                    expected_exception: Type[BaseException] = Exception,
                    name: str = None,
                    fallback_function: Callable = None,
@@ -203,6 +216,7 @@ def CircuitBreaker(max_attempts: int = 5,
         return CircuitBreakerClass(
             max_attempts=max_attempts,
             reset_timeout=reset_timeout,
+            sliding_window_length=sliding_window_length,
             expected_exception=expected_exception,
             name=name,
             fallback_function=fallback_function,
