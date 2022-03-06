@@ -18,7 +18,7 @@ class Retryable:
 
     def __init__(self, max_retries: int = 3, backoff: Union[int, float] = 1000,
                  backoff_multiplier: Union[int, float] = None,
-                 fallback_function: Callable = None,
+                 fallback: Callable = None,
                  expected_exception: Type[BaseException] = Exception):
         """
 
@@ -29,14 +29,14 @@ class Retryable:
         :param backoff_exponent: Exponent to make the backoff time increase for every attempt
         (backoff * (retry_count ** backoff_exponent)). Say you set it to 2. On the second attempt,
         the backoff time will be multiplied with 2. On the fourth attempt, the backoff time will be multiplied with 8.
-        :param fallback_function: Fallback function to get called in case the max retries limit has been reached. Optional,
+        :param fallback: Fallback function to get called in case the max retries limit has been reached. Optional,
         if not set the last exception will just get thrown.
         :param expected_exception: For what exceptions should we attempt to retry? Default is any exception, but you may
         want this to be more fine-grained (e.g. ConnectionError, RequestException)
         """
         self.max_retries = max_retries
         self.backoff = backoff / 1000  # Milliseconds to seconds
-        self.fallback_function = fallback_function
+        self.fallback_function = fallback
         self._current_attempts = 0
         self.backoff_exponent = backoff_multiplier
         self._expected_exception = expected_exception
