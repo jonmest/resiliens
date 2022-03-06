@@ -85,7 +85,6 @@ class RetryableClass:
                     raise e
 
 
-
 # The decorator itself
 def Retryable(max_retries: int = 3,
               backoff: Union[int, float] = 1000,
