@@ -16,12 +16,14 @@ class TestCircuitBreaker(unittest.TestCase):
         self.failed_count = 0
         self.successful_count = 0
 
-    @CircuitBreaker(max_attempts=MAX_ATTEMPTS, sliding_window_length=WINDOW_SIZE)
+    @CircuitBreaker(max_attempts=MAX_ATTEMPTS,
+                    sliding_window_length=WINDOW_SIZE)
     def fake_successful_http_call(self):
         self.successful_count += 1
         return True
 
-    @CircuitBreaker(max_attempts=MAX_ATTEMPTS, sliding_window_length=WINDOW_SIZE)
+    @CircuitBreaker(max_attempts=MAX_ATTEMPTS,
+                    sliding_window_length=WINDOW_SIZE)
     def fake_failed_http_call(self):
         self.failed_count += 1
         raise Exception()
@@ -36,7 +38,6 @@ class TestCircuitBreaker(unittest.TestCase):
         actual = self.failed_count
         self.assertEqual(expected, actual)
 
-
     def test_circuitBreakerIsGivenName_getNameProperty_returnsRightName(self):
         self.circuit_breaker = CircuitBreaker(name="CB1")
 
@@ -45,7 +46,8 @@ class TestCircuitBreaker(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    def test_circuitBreakerIsGivenMaxAttempts_getMaxAttemptsProperty_returnsRightMaxAttempts(self):
+    def test_circuitBreakerIsGivenMaxAttempts_getMaxAttemptsProperty_returnsRightMaxAttempts(
+            self):
         self.circuit_breaker = CircuitBreaker(max_attempts=100)
 
         expected = 100
@@ -60,4 +62,3 @@ class TestCircuitBreaker(unittest.TestCase):
         actual = self.circuit_breaker.status
 
         self.assertEqual(expected, actual)
-
