@@ -1,5 +1,6 @@
 #  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
 
+
 class CircuitBreakerManager:
     circuit_breakers = {}
 
