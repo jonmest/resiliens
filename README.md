@@ -1,5 +1,5 @@
-# Resilience4py
-A small library of decorators to help make your Python application more resilient. Currently, there are two decorators provided:
+# Resiliens
+A small Python library of decorators to help make your application more resilient. Currently, there are two decorators provided:
 1. Retryable
 2. CircuitBreaker
 
