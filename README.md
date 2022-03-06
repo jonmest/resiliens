@@ -4,7 +4,7 @@ A small Python library of decorators to help make your application more resilien
 2. CircuitBreaker
 
 [![Build, lint and test](https://github.com/jonmest/resiliens/actions/workflows/python-package.yml/badge.svg)](https://github.com/jonmest/resiliens/actions/workflows/python-package.yml)
-
+[![DeepSource](https://deepsource.io/gh/jonmest/resiliens.svg/?label=active+issues&show_trend=true&token=03a2Qus_Z4mOopqLDJ2yMqdp)](https://deepsource.io/gh/jonmest/resiliens/?ref=repository-badge)
 ## Installation
 Built for Python >=3.6
 ```bash
