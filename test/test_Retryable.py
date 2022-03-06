@@ -1,7 +1,7 @@
 #  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
 import unittest
 
-from src.resiliens.retryable.Retryable import Retryable
+from src.resiliens.retryable import Retryable
 
 
 class TestRetryable(unittest.TestCase):
@@ -46,3 +46,14 @@ class TestRetryable(unittest.TestCase):
             raise Exception()
 
         self.assertRaises(Exception, failed_http_call_with_unexpected_exception)
+
+    def test_decoratorWithNoArguments(self):
+        @Retryable
+        def failed_http_call_with_unexpected_exception():
+            self.failed_count += 1
+            raise Exception()
+
+        failed_http_call_with_unexpected_exception()
+        expected = 3
+        actual = self.failed_count
+        self.assertEqual(expected, actual)

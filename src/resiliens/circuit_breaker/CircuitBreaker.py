@@ -14,8 +14,7 @@ from src.resiliens.circuit_breaker.CircuitBreakerState import CircuitBreakerStat
 from src.resiliens.circuit_breaker.CircuitBreakerStatus import CircuitBreakerStatus
 
 
-class CircuitBreaker:
-
+class CircuitBreakerClass:
     _max_attempts: int
     _reset_timeout: Union[float, int]
     _expected_exception: Type[BaseException]
@@ -173,3 +172,38 @@ class CircuitBreaker:
 
     def __str__(self, *args, **kwargs) -> str:
         return self._name
+
+
+def CircuitBreaker(max_attempts: int = 5,
+                   reset_timeout: Union[float, int] = 20_000,
+                   expected_exception: Type[BaseException] = Exception,
+                   name: str = None,
+                   fallback_function: Callable = None,
+                   fallback_function_with_exception: Callable = None):
+    """
+
+            :param max_attempts: Max failed attempts until the circuit breaker should be opened
+            :param reset_timeout:
+            Number of milliseconds until an opened circuit breaker should become half-opened and allow new attempts
+            :param expected_exception: The
+            exception the circuit breaker should expect as a failure (e.g. ConnectionError, RequestException)
+            :param
+            name: Name of the circuit breaker instance. Mostly useful if you intend to use the CircuitBreakerManager.
+            :param fallback_function: A function to use as fallback if the circuit breaker is opened.
+            :param fallback_function_with_exception: A function to use as fallback if the circuit breaker is opened.
+            The first argument supplied to it will be the most recent exception (i.e.
+            fallback_function_with_exception(last_exception, *args, **kwargs))
+    """
+
+    # To be able to use decorator without parentheses
+    # if no arguments are provided. Hate it but gets the job done.
+    if callable(max_attempts):
+        return CircuitBreakerClass().decorate(max_attempts)
+    else:
+        return CircuitBreakerClass(
+            max_attempts=max_attempts,
+            reset_timeout=reset_timeout,
+            expected_exception=expected_exception,
+            name=name,
+            fallback_function=fallback_function,
+            fallback_function_with_exception=fallback_function_with_exception)
