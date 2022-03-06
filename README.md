@@ -3,6 +3,8 @@ A small Python library of decorators to help make your application more resilien
 1. Retryable
 2. CircuitBreaker
 
+[![Build, lint and test](https://github.com/jonmest/resiliens/actions/workflows/python-package.yml/badge.svg)](https://github.com/jonmest/resiliens/actions/workflows/python-package.yml)
+
 ## Installation
 Built for Python >=3.6
 ```bash

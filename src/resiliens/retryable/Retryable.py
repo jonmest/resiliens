@@ -41,10 +41,12 @@ class RetryableClass:
     def __call__(self, decorated_function=None):
         return self.decorate(decorated_function)
 
-    def call(self, func, *args, **kwargs) -> Any:
+    @staticmethod
+    def call(func, *args, **kwargs) -> Any:
         return func(*args, **kwargs)
 
-    def call_generator(self, func, *args, **kwargs):
+    @staticmethod
+    def call_generator(func, *args, **kwargs):
         for el in func(*args, **kwargs):
             yield el
 
