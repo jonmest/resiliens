@@ -43,12 +43,10 @@ class CircuitBreakerClass:
         fallback_function_with_exception(last_exception, *args, **kwargs))
         """
 
-        self._state = CircuitBreakerState(
-            status=CircuitBreakerStatus.CLOSED,
-            fail_count=0,
-            last_failure=None,
-            opened=monotonic()
-        )
+        self._state = CircuitBreakerState(status=CircuitBreakerStatus.CLOSED,
+                                          fail_count=0,
+                                          last_failure=None,
+                                          opened=monotonic())
         self._max_attempts = max_attempts
         self._reset_timeout = reset_timeout / 1000  # From milliseconds to seconds
         self._expected_exception = expected_exception
@@ -68,7 +66,8 @@ class CircuitBreakerClass:
 
     @property
     def open_until(self):
-        return datetime.utcnow() + timedelta(seconds=self.open_seconds_remaining)
+        return datetime.utcnow() + timedelta(
+            seconds=self.open_seconds_remaining)
 
     @property
     def open_seconds_remaining(self) -> int:
@@ -108,12 +107,11 @@ class CircuitBreakerClass:
     def __enter__(self):
         return None
 
-    def __exit__(self,
-                 exception_type: Optional[Type[BaseException]],
+    def __exit__(self, exception_type: Optional[Type[BaseException]],
                  exception_value: Optional[BaseException],
-                 exception_traceback: Optional[TracebackType]
-                 ) -> bool:
-        if exception_type and issubclass(exception_type, self._expected_exception):
+                 exception_traceback: Optional[TracebackType]) -> bool:
+        if exception_type and issubclass(exception_type,
+                                         self._expected_exception):
             self._state.last_failure = exception_value
             self.__call_failed()
         else:
@@ -137,7 +135,8 @@ class CircuitBreakerClass:
                 if self.fallback_function:
                     return self.fallback_function(*args, **kwargs)
                 elif self._fallback_function_with_exception:
-                    return self._fallback_function_with_exception(self._state.last_failure, *args, **kwargs)
+                    return self._fallback_function_with_exception(
+                        self._state.last_failure, *args, **kwargs)
                 raise CircuitBreakerException(self)
             return call(function_to_decorate, *args, **kwargs)
 

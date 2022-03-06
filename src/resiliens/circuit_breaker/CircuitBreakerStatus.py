@@ -1,5 +1,6 @@
 #  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
 
+
 class _CircuitBreakerStatus:
     _CLOSED: str = 'CLOSED'
     _OPEN: str = 'OPEN'

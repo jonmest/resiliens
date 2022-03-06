@@ -39,15 +39,19 @@ class TestRetryable(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    def test_callFailsWithUnexpectedException_noRetryIsPerformedAndExceptionIsRaised(self):
+    def test_callFailsWithUnexpectedException_noRetryIsPerformedAndExceptionIsRaised(
+            self):
+
         @Retryable(max_retries=self.MAX_ATTEMPTS, expected_exception=IOError)
         def failed_http_call_with_unexpected_exception():
             self.failed_count += 1
             raise Exception()
 
-        self.assertRaises(Exception, failed_http_call_with_unexpected_exception)
+        self.assertRaises(Exception,
+                          failed_http_call_with_unexpected_exception)
 
     def test_decoratorWithNoArguments(self):
+
         @Retryable
         def failed_http_call_with_unexpected_exception():
             self.failed_count += 1
