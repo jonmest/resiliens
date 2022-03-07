@@ -162,7 +162,7 @@ class CircuitBreakerClass:
         self._state.last_failure = None
         self._state.fail_count = 0
         if self._sliding_window:
-            self._sliding_window.add(False)
+            self._sliding_window.add(True)
 
     def __call_failed(self) -> None:
         self._state.fail_count += 1
