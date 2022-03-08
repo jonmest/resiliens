@@ -6,7 +6,9 @@
 </p>
 
 # About
-Resiliens is a Python library of decorators to help make your application more resilient. Currently, there are two decorators provided:
+If you want to make your Python code more resilient, use the Resilient library! Quickly wrap your existing functions with the `@Retryable` decorator to automatically retry on failure, and with `@CircuitBreaker` to prevent calls to the function if it has exceeded a failure limit.
+
+Currently, there are two decorators provided:
 1. Retryable - automatically re-calls the wrapped function if an exception is raised.
 2. CircuitBreaker - prevent calls to the wrapped function if it is known to currently be failing.
     
