@@ -42,7 +42,7 @@ class CircuitBreakerClass:
         :param name: Name of the circuit breaker instance. Mostly useful if you intend to use the CircuitBreakerManager.
         :param fallback_function: A function to use as fallback if the circuit breaker is opened.
         :param fallback_function_with_exception: A function to use as fallback if the circuit breaker is opened. The first
-        argument supplied to it will be the most recent exception (i.e. fallback_function_with_exception(
+        argument supplied to it will be the most recent exception (i.e. fallback_exception(
         last_exception, *args, **kwargs))
         """
 
@@ -137,15 +137,29 @@ class CircuitBreakerClass:
         @wraps(function_to_decorate)
         def wrapper(*args, **kwargs):
             if self.opened:
-                if self.fallback_function:
+                return self._handle_open_call(call, *args, **kwargs)
+            return self.try_catch_fallback(call, function_to_decorate, *args, **kwargs)
+
+        return wrapper
+
+    def try_catch_fallback(self, call, function_to_decorate, *args, **kwargs):
+        try:
+            return call(function_to_decorate, *args, **kwargs)
+        except Exception as e:
+            if issubclass(e.__class__, self._expected_exception):
+                if self._fallback_function:
                     return call(self.fallback_function, *args, **kwargs)
                 elif self._fallback_function_with_exception:
                     return call(self._fallback_function_with_exception,
                                 (self.last_failure, *args), **kwargs)
-                raise CircuitBreakerException(self)
-            return call(function_to_decorate, *args, **kwargs)
 
-        return wrapper
+    def _handle_open_call(self, call, *args, **kwargs):
+        if self.fallback_function:
+            return call(self.fallback_function, *args, **kwargs)
+        elif self._fallback_function_with_exception:
+            return call(self._fallback_function_with_exception,
+                        (self.last_failure, *args), **kwargs)
+        raise CircuitBreakerException(self)
 
     def call(self, func, *args, **kwargs) -> Any:
         with self:
@@ -191,8 +205,8 @@ def CircuitBreaker(failures: int = 5,
                    sliding_window_size: int = None,
                    expected_exception: Type[BaseException] = Exception,
                    name: str = None,
-                   fallback_function: Callable = None,
-                   fallback_function_with_exception: Callable = None):
+                   fallback: Callable = None,
+                   fallback_exception: Callable = None):
     """
     :param failures: Number of failures that need to be reached for the circuit breaker to be opened. If the
     argument "sliding_window_size" is supplied, this will be the total number of failures in the window. If it is
@@ -202,9 +216,9 @@ def CircuitBreaker(failures: int = 5,
     the argument "failures" number of failures are in the window, the circuit breaker will open.
     :param expected_exception: The exception the circuit breaker should expect as a failure (e.g. ConnectionError, RequestException)
     :param name: Name of the circuit breaker instance. Mostly useful if you intend to use the CircuitBreakerManager.
-    :param fallback_function: A function to use as fallback if the circuit breaker is opened.
-    :param fallback_function_with_exception: A function to use as fallback if the circuit breaker is opened. The first
-    argument supplied to it will be the most recent exception (i.e. fallback_function_with_exception(
+    :param fallback: A function to use as fallback if the circuit breaker is opened.
+    :param fallback_exception: A function to use as fallback if the circuit breaker is opened. The first
+    argument supplied to it will be the most recent exception (i.e. fallback_exception(
     last_exception, *args, **kwargs))
     """
 
@@ -219,5 +233,5 @@ def CircuitBreaker(failures: int = 5,
             sliding_window_size=sliding_window_size,
             expected_exception=expected_exception,
             name=name,
-            fallback_function=fallback_function,
-            fallback_function_with_exception=fallback_function_with_exception)
+            fallback_function=fallback,
+            fallback_function_with_exception=fallback_exception)

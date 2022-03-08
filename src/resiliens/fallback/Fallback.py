@@ -59,7 +59,7 @@ class FallbackClass:
         except Exception as e:
             if issubclass(e.__class__, self._expected_exception):
                 if self.fallback_exception:
-                    return self.fallback_exception(e, *args, **kwargs)
+                    return call(self.fallback_exception, (e, *args), **kwargs)
                 else:
                     return call(self.fallback, *args, **kwargs)
             else:

@@ -10,6 +10,7 @@ class RetryableClass:
     backoff: Union[int, float]
     backoff_exponent: Union[int, float]
     fallback_function: Callable
+    fallback_exception: Callable
 
     _current_attempts: int
     _last_failure: Exception
@@ -19,6 +20,7 @@ class RetryableClass:
                  backoff: Union[int, float] = 1000,
                  backoff_multiplier: Union[int, float] = None,
                  fallback: Callable = None,
+                 fallback_exception: Callable = None,
                  expected_exception: Type[BaseException] = Exception):
         """
         :param max_retries: Max number of retries until it should give up.
@@ -36,6 +38,7 @@ class RetryableClass:
         self.max_retries = max_retries
         self.backoff = backoff / 1000  # Milliseconds to seconds
         self.fallback_function = fallback
+        self.fallback_exception = fallback_exception
         self._current_attempts = 0
         self.backoff_exponent = backoff_multiplier
         self._expected_exception = expected_exception
@@ -85,6 +88,8 @@ class RetryableClass:
                     raise e
         if self.fallback_function:
             return call(self.fallback_function, *args, **kwargs)
+        elif self.fallback_exception:
+            return call(self.fallback_exception, (self._last_failure, *args), **kwargs)
         else:
             raise self._last_failure
 
@@ -94,8 +99,11 @@ def Retryable(max_retries: int = 3,
               backoff: Union[int, float] = 1000,
               backoff_multiplier: Union[int, float] = None,
               fallback: Callable = None,
+              fallback_exception: Callable = None,
               expected_exception: Type[BaseException] = Exception):
     """
+            :param fallback_exception:
+            :param backoff_multiplier:
             :param max_retries: Max number of retries until it should give up.
             :param backoff: Backoff time in MILLISECONDS. If you don't set a backoff_exponent, this
             will be constant (e.g. 1000 milliseconds for all retries). If you do set a backoff_exponent,
@@ -118,4 +126,5 @@ def Retryable(max_retries: int = 3,
                               backoff=backoff,
                               backoff_multiplier=backoff_multiplier,
                               fallback=fallback,
+                              fallback_exception=fallback_exception,
                               expected_exception=expected_exception)
