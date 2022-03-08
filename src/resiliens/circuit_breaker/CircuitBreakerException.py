@@ -4,6 +4,7 @@ strtimeformat = "%m/%d/%Y, %H:%M:%S"
 
 
 class CircuitBreakerException(Exception):
+
     def __init__(self, circuit_breaker, *args):
         super(CircuitBreakerException, self).__init__(*args)
         self._circuit_breaker = circuit_breaker
