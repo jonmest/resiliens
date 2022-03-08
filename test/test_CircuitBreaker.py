@@ -17,14 +17,12 @@ class TestCircuitBreaker(unittest.TestCase):
         self.failed_count = 0
         self.successful_count = 0
 
-    @CircuitBreaker(failures=MAX_ATTEMPTS,
-                    sliding_window_size=WINDOW_SIZE)
+    @CircuitBreaker(failures=MAX_ATTEMPTS, sliding_window_size=WINDOW_SIZE)
     def fake_successful_http_call(self):
         self.successful_count += 1
         return True
 
-    @CircuitBreaker(failures=MAX_ATTEMPTS,
-                    sliding_window_size=WINDOW_SIZE)
+    @CircuitBreaker(failures=MAX_ATTEMPTS, sliding_window_size=WINDOW_SIZE)
     def fake_failed_http_call(self):
         self.failed_count += 1
         raise Exception()

@@ -167,7 +167,8 @@ class CircuitBreakerClass:
         self._state.fail_count += 1
         if self._sliding_window:
             self._sliding_window.add(False)
-            if self._sliding_window.get_failure_count() >= self._failure_threshold:
+            if self._sliding_window.get_failure_count(
+            ) >= self._failure_threshold:
                 self._state.status = CircuitBreakerStatus.open
                 self._state.opened = monotonic()
         elif self._state.fail_count >= self._failure_threshold:
