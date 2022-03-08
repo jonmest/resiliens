@@ -4,16 +4,20 @@ import unittest
 
 from src.resiliens.fallback.Fallback import WithFallback
 
+
 def fallback_for_function(foo, bar):
     return foo, bar
+
 
 @WithFallback(fallback_for_function)
 def failing_function(foo, bar):
     raise Exception
 
+
 @WithFallback(fallback_for_function)
 def succeeding_function(foo, bar):
     return bar, foo
+
 
 class TestFallback(unittest.TestCase):
     fallback_got_called: bool
@@ -41,17 +45,22 @@ class TestFallback(unittest.TestCase):
         self.assertTrue(res)
         self.assertFalse(self.fallback_got_called)
 
-    def test_fallbackWithIOErrorAsExpected_regularExceptionIsThrown_fallbackNotCalled(self):
-        @WithFallback(fallback=self.method_fallback, expected_exception=IOError)
+    def test_fallbackWithIOErrorAsExpected_regularExceptionIsThrown_fallbackNotCalled(
+            self):
+
+        @WithFallback(fallback=self.method_fallback,
+                      expected_exception=IOError)
         def bogus_function(_self):
             raise Exception()
+
         self.assertRaises(Exception, bogus_function)
 
     @WithFallback(fallback=method_fallback, expected_exception=IOError)
     def bogus_function(self):
         raise IOError()
 
-    def test_fallbackWithIOErrorAsExpected_IOErrorIsThrown_fallbackIsCalled(self):
+    def test_fallbackWithIOErrorAsExpected_IOErrorIsThrown_fallbackIsCalled(
+            self):
         self.bogus_function()
         self.assertTrue(self.fallback_got_called)
 
