@@ -89,7 +89,8 @@ class RetryableClass:
         if self.fallback_function:
             return call(self.fallback_function, *args, **kwargs)
         elif self.fallback_exception:
-            return call(self.fallback_exception, (self._last_failure, *args), **kwargs)
+            return call(self.fallback_exception, (self._last_failure, *args),
+                        **kwargs)
         else:
             raise self._last_failure
 

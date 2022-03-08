@@ -1,9 +1,7 @@
 #  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
 from resiliens import CircuitBreaker
 
-data_store = {
-    "underlying_function_call_count": 0
-}
+data_store = {"underlying_function_call_count": 0}
 
 
 # After 5 failures, open the circuit breaker.
@@ -21,4 +19,5 @@ if __name__ == "__main__":
         except Exception as e:
             print(e)
 
-    print("The underlying function got called", data_store["underlying_function_call_count"], "times")
+    print("The underlying function got called",
+          data_store["underlying_function_call_count"], "times")
