@@ -1,13 +1,12 @@
 #  Copyright (c) 2022 - Thumos - Jon Cavallie Mester
 from resiliens import Retryable
 
-data_store = {
-    "retry_count": 0
-}
+data_store = {"retry_count": 0}
 
 
 def fallback(exception):
-    print("Couldn't reach the imaginary API but at least I tried", data_store["retry_count"], "times.")
+    print("Couldn't reach the imaginary API but at least I tried",
+          data_store["retry_count"], "times.")
     print("It was that damn exception messing things up:", exception)
 
 

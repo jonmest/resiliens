@@ -3,7 +3,8 @@ from resiliens import CircuitBreaker
 
 
 def fallback(exception: Exception, foo):
-    print(f"Another function tried to do something foo={foo} and failed:", exception)
+    print(f"Another function tried to do something foo={foo} and failed:",
+          exception)
 
 
 # After 5 failures, open the circuit breaker.

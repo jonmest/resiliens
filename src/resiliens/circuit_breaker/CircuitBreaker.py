@@ -138,7 +138,8 @@ class CircuitBreakerClass:
         def wrapper(*args, **kwargs):
             if self.opened:
                 return self._handle_open_call(call, *args, **kwargs)
-            return self.try_catch_fallback(call, function_to_decorate, *args, **kwargs)
+            return self.try_catch_fallback(call, function_to_decorate, *args,
+                                           **kwargs)
 
         return wrapper
 
