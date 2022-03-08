@@ -1,12 +1,17 @@
-# Resiliens
-A small Python library of decorators to help make your application more resilient. Currently, there are two decorators provided:
+<p align="center">
+    <img src="logo.png" alt="Resiliens"/><br/>
+    A Python package for resilient programming. <br/><br/>
+    <a href="https://github.com/jonmest/resiliens/actions/workflows/python-package.yml"><img src="https://github.com/jonmest/resiliens/actions/workflows/python-package.yml/badge.svg" alt="Build, lint and test"/></a>
+    <a href="https://deepsource.io/gh/jonmest/resiliens/?ref=repository-badge"><img src="https://deepsource.io/gh/jonmest/resiliens.svg/?label=active+issues&show_trend=true&token=03a2Qus_Z4mOopqLDJ2yMqdp" alt="Build, lint and test"/></a>
+</p>
+
+# About
+Resiliens is a Python library of decorators to help make your application more resilient. Currently, there are two decorators provided:
 1. Retryable - automatically re-calls the wrapped function if an exception is raised.
 2. CircuitBreaker - prevent calls to the wrapped function if it is known to currently be failing.
-
+    
 The documentation here will be brief, but hopefully you'll be able to make sense of it by reading the docstrings.
 
-[![Build, lint and test](https://github.com/jonmest/resiliens/actions/workflows/python-package.yml/badge.svg)](https://github.com/jonmest/resiliens/actions/workflows/python-package.yml)
-[![DeepSource](https://deepsource.io/gh/jonmest/resiliens.svg/?label=active+issues&show_trend=true&token=03a2Qus_Z4mOopqLDJ2yMqdp)](https://deepsource.io/gh/jonmest/resiliens/?ref=repository-badge)
 ## Installation
 Built for Python >=3.6
 ```bash
