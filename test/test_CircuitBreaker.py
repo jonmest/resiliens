@@ -72,7 +72,7 @@ class TestCircuitBreaker(unittest.TestCase):
         self.circuit_breaker = CircuitBreaker(max_attempts=100)
 
         expected = 100
-        actual = self.circuit_breaker.max_attempts
+        actual = self.circuit_breaker.failure_threshold
 
         self.assertEqual(expected, actual)
 

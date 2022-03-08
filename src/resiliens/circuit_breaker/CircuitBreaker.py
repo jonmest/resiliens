@@ -9,14 +9,14 @@ from types import TracebackType
 from typing import Union, Callable, Optional, Type, Any
 
 from src.resiliens.circuit_breaker.CircuitBreakerException import CircuitBreakerException
-from src.resiliens.circuit_breaker.SlidingWindow import SlidingWindow
-from src.resiliens.circuit_breaker.manager.CircuitBreakerManager import CircuitBreakerManager
 from src.resiliens.circuit_breaker.CircuitBreakerState import CircuitBreakerState
 from src.resiliens.circuit_breaker.CircuitBreakerStatus import CircuitBreakerStatus
+from src.resiliens.circuit_breaker.SlidingWindow import SlidingWindow
+from src.resiliens.circuit_breaker.manager.CircuitBreakerManager import CircuitBreakerManager
 
 
 class CircuitBreakerClass:
-    _max_attempts: int
+    _failure_threshold: int
     _reset_timeout: Union[float, int]
     _expected_exception: Type[BaseException]
     _fallback_function: Callable
@@ -24,40 +24,40 @@ class CircuitBreakerClass:
     _sliding_window: SlidingWindow
 
     def __init__(self,
-                 max_attempts: int = 5,
+                 failures: int = 5,
                  reset_timeout: Union[float, int] = 20_000,
-                 sliding_window_length: int = None,
+                 sliding_window_size: int = None,
                  expected_exception: Type[BaseException] = Exception,
                  name: str = None,
                  fallback_function: Callable = None,
                  fallback_function_with_exception: Callable = None):
         """
-
-        :param max_attempts: Max failed attempts until the circuit breaker should be opened
-        :param reset_timeout:
-        Number of milliseconds until an opened circuit breaker should become half-opened and allow new attempts
-        :param expected_exception: The
-        exception the circuit breaker should expect as a failure (e.g. ConnectionError, RequestException)
-        :param
-        name: Name of the circuit breaker instance. Mostly useful if you intend to use the CircuitBreakerManager.
+        :param failures: Number of failures that need to be reached for the circuit breaker to be opened. If the
+        argument "sliding_window_size" is supplied, this will be the total number of failures in the window. If it is
+        not supplied, it will be the number of failures in a row.
+        :param reset_timeout: Number of milliseconds until an opened circuit breaker should become half-open and allow new attempts
+        :param sliding_window_size makes the circuit breaker keep a sliding window of the most recent results (failure, success). If
+        the argument "failures" number of failures are in the window, the circuit breaker will open.
+        :param expected_exception: The exception the circuit breaker should expect as a failure (e.g. ConnectionError, RequestException)
+        :param name: Name of the circuit breaker instance. Mostly useful if you intend to use the CircuitBreakerManager.
         :param fallback_function: A function to use as fallback if the circuit breaker is opened.
-        :param fallback_function_with_exception: A function to use as fallback if the circuit breaker is opened.
-        The first argument supplied to it will be the most recent exception (i.e.
-        fallback_function_with_exception(last_exception, *args, **kwargs))
+        :param fallback_function_with_exception: A function to use as fallback if the circuit breaker is opened. The first
+        argument supplied to it will be the most recent exception (i.e. fallback_function_with_exception(
+        last_exception, *args, **kwargs))
         """
 
         self._state = CircuitBreakerState(status=CircuitBreakerStatus.CLOSED,
                                           fail_count=0,
                                           last_failure=None,
                                           opened=monotonic())
-        self._max_attempts = max_attempts
+        self._failure_threshold = failures
         self._reset_timeout = reset_timeout / 1000  # From milliseconds to seconds
         self._expected_exception = expected_exception
         self._fallback_function = fallback_function
         self._fallback_function_with_exception = fallback_function_with_exception
         self._name = name
-        if sliding_window_length:
-            self._sliding_window = SlidingWindow(sliding_window_length)
+        if sliding_window_size:
+            self._sliding_window = SlidingWindow(sliding_window_size)
 
     @property
     def status(self):
@@ -66,8 +66,8 @@ class CircuitBreakerClass:
         return self._state.status
 
     @property
-    def max_attempts(self):
-        return self._max_attempts
+    def failure_threshold(self):
+        return self._failure_threshold
 
     @property
     def open_until(self):
@@ -167,10 +167,10 @@ class CircuitBreakerClass:
         self._state.fail_count += 1
         if self._sliding_window:
             self._sliding_window.add(False)
-            if self._sliding_window.get_failure_count() >= self._max_attempts:
+            if self._sliding_window.get_failure_count() >= self._failure_threshold:
                 self._state.status = CircuitBreakerStatus.OPEN
                 self._state.opened = monotonic()
-        elif self._state.fail_count >= self._max_attempts:
+        elif self._state.fail_count >= self._failure_threshold:
             self._state.status = CircuitBreakerStatus.OPEN
             self._state.opened = monotonic()
 
@@ -185,37 +185,37 @@ class CircuitBreakerClass:
         return self._name
 
 
-def CircuitBreaker(max_attempts: int = 5,
+def CircuitBreaker(failures: int = 5,
                    reset_timeout: Union[float, int] = 20_000,
-                   sliding_window_length: int = None,
+                   sliding_window_size: int = None,
                    expected_exception: Type[BaseException] = Exception,
                    name: str = None,
                    fallback_function: Callable = None,
                    fallback_function_with_exception: Callable = None):
     """
-
-            :param max_attempts: Max failed attempts until the circuit breaker should be opened
-            :param reset_timeout:
-            Number of milliseconds until an opened circuit breaker should become half-opened and allow new attempts
-            :param expected_exception: The
-            exception the circuit breaker should expect as a failure (e.g. ConnectionError, RequestException)
-            :param
-            name: Name of the circuit breaker instance. Mostly useful if you intend to use the CircuitBreakerManager.
-            :param fallback_function: A function to use as fallback if the circuit breaker is opened.
-            :param fallback_function_with_exception: A function to use as fallback if the circuit breaker is opened.
-            The first argument supplied to it will be the most recent exception (i.e.
-            fallback_function_with_exception(last_exception, *args, **kwargs))
+    :param failures: Number of failures that need to be reached for the circuit breaker to be opened. If the
+    argument "sliding_window_size" is supplied, this will be the total number of failures in the window. If it is
+    not supplied, it will be the number of failures in a row.
+    :param reset_timeout: Number of milliseconds until an opened circuit breaker should become half-open and allow new attempts
+    :param sliding_window_size makes the circuit breaker keep a sliding window of the most recent results (failure, success). If
+    the argument "failures" number of failures are in the window, the circuit breaker will open.
+    :param expected_exception: The exception the circuit breaker should expect as a failure (e.g. ConnectionError, RequestException)
+    :param name: Name of the circuit breaker instance. Mostly useful if you intend to use the CircuitBreakerManager.
+    :param fallback_function: A function to use as fallback if the circuit breaker is opened.
+    :param fallback_function_with_exception: A function to use as fallback if the circuit breaker is opened. The first
+    argument supplied to it will be the most recent exception (i.e. fallback_function_with_exception(
+    last_exception, *args, **kwargs))
     """
 
-    # To be able to use decorator without parentheses
-    # if no arguments are provided. Hate it but gets the job done.
-    if callable(max_attempts):
-        return CircuitBreakerClass().decorate(max_attempts)
+    # We check this to be able to use decorator without parentheses
+    # if no arguments are provided. Hacky it but gets the job done.
+    if callable(failures):
+        return CircuitBreakerClass().decorate(failures)
     else:
         return CircuitBreakerClass(
-            max_attempts=max_attempts,
+            failures=failures,
             reset_timeout=reset_timeout,
-            sliding_window_length=sliding_window_length,
+            sliding_window_size=sliding_window_size,
             expected_exception=expected_exception,
             name=name,
             fallback_function=fallback_function,
