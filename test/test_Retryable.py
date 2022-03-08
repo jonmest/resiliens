@@ -26,7 +26,7 @@ class TestRetryable(unittest.TestCase):
         raise Exception()
 
     def test_callRaisesException_retryIsDoneRightNumberOfTimes(self):
-        self.fake_failed_http_call()
+        self.assertRaises(Exception, self.fake_failed_http_call)
         expected = self.MAX_ATTEMPTS
         actual = self.failed_count
 
@@ -53,7 +53,7 @@ class TestRetryable(unittest.TestCase):
             self.failed_count += 1
             raise Exception()
 
-        failed_http_call_with_unexpected_exception()
+        self.assertRaises(Exception, failed_http_call_with_unexpected_exception)
         expected = 3
         actual = self.failed_count
         self.assertEqual(expected, actual)
