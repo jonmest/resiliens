@@ -138,10 +138,9 @@ class CircuitBreakerClass:
         def wrapper(*args, **kwargs):
             if self.opened:
                 if self.fallback_function:
-                    return self.fallback_function(*args, **kwargs)
+                    return call(self.fallback_function, *args, **kwargs)
                 elif self._fallback_function_with_exception:
-                    return self._fallback_function_with_exception(
-                        self._state.last_failure, *args, **kwargs)
+                    return call(self._fallback_function_with_exception, (self.last_failure, *args), **kwargs)
                 raise CircuitBreakerException(self)
             return call(function_to_decorate, *args, **kwargs)
 

@@ -6,7 +6,9 @@
 </p>
 
 # About
-If you want to make your Python code more resilient, use the Resilient library! Quickly wrap your existing functions with the `@Retryable` decorator to automatically retry on failure, and with `@CircuitBreaker` to prevent calls to the function if it has exceeded a failure limit.
+If you want to make your Python code more resilient, use the Resiliens library! Quickly wrap your existing functions
+with the `@Retryable` decorator to automatically retry on failure, and with `@CircuitBreaker` to prevent calls to the
+function if it has exceeded a failure limit.
 
 Currently, there are two decorators provided:
 1. Retryable - automatically re-calls the wrapped function if an exception is raised.

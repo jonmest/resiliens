@@ -80,6 +80,7 @@ class RetryableClass:
                         time.sleep(self.get_backoff_time())
                 else:
                     raise e
+        return call(self.fallback_function, *args, **kwargs)
 
 
 # The decorator itself
