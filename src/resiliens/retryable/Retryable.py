@@ -14,7 +14,9 @@ class RetryableClass:
     _current_attempts: int
     _last_failure: Exception
 
-    def __init__(self, max_retries: int = 3, backoff: Union[int, float] = 1000,
+    def __init__(self,
+                 max_retries: int = 3,
+                 backoff: Union[int, float] = 1000,
                  backoff_multiplier: Union[int, float] = None,
                  fallback: Callable = None,
                  expected_exception: Type[BaseException] = Exception):
@@ -52,7 +54,8 @@ class RetryableClass:
 
     def get_backoff_time(self):
         if self.backoff_exponent:
-            return max(self._current_attempts ** self.backoff_exponent, 1) * self.backoff
+            return max(self._current_attempts**self.backoff_exponent,
+                       1) * self.backoff
         else:
             return self.backoff
 
@@ -84,7 +87,8 @@ class RetryableClass:
 
 
 # The decorator itself
-def Retryable(max_retries: int = 3, backoff: Union[int, float] = 1000,
+def Retryable(max_retries: int = 3,
+              backoff: Union[int, float] = 1000,
               backoff_multiplier: Union[int, float] = None,
               fallback: Callable = None,
               expected_exception: Type[BaseException] = Exception):
@@ -107,9 +111,8 @@ def Retryable(max_retries: int = 3, backoff: Union[int, float] = 1000,
     if callable(max_retries):
         return RetryableClass().decorate(max_retries)
     else:
-        return RetryableClass(
-            max_retries=max_retries,
-            backoff=backoff,
-            backoff_multiplier=backoff_multiplier,
-            fallback=fallback,
-            expected_exception=expected_exception)
+        return RetryableClass(max_retries=max_retries,
+                              backoff=backoff,
+                              backoff_multiplier=backoff_multiplier,
+                              fallback=fallback,
+                              expected_exception=expected_exception)
