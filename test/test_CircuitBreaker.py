@@ -17,14 +17,14 @@ class TestCircuitBreaker(unittest.TestCase):
         self.failed_count = 0
         self.successful_count = 0
 
-    @CircuitBreaker(max_attempts=MAX_ATTEMPTS,
-                    sliding_window_length=WINDOW_SIZE)
+    @CircuitBreaker(failures=MAX_ATTEMPTS,
+                    sliding_window_size=WINDOW_SIZE)
     def fake_successful_http_call(self):
         self.successful_count += 1
         return True
 
-    @CircuitBreaker(max_attempts=MAX_ATTEMPTS,
-                    sliding_window_length=WINDOW_SIZE)
+    @CircuitBreaker(failures=MAX_ATTEMPTS,
+                    sliding_window_size=WINDOW_SIZE)
     def fake_failed_http_call(self):
         self.failed_count += 1
         raise Exception()
@@ -33,9 +33,9 @@ class TestCircuitBreaker(unittest.TestCase):
         should_fail = True
         reset_time = 1000
 
-        @CircuitBreaker(max_attempts=self.MAX_ATTEMPTS,
+        @CircuitBreaker(failures=self.MAX_ATTEMPTS,
                         reset_timeout=reset_time,
-                        sliding_window_length=self.WINDOW_SIZE)
+                        sliding_window_size=self.WINDOW_SIZE)
         def test_func():
             if should_fail:
                 self.failed_count += 1
@@ -69,7 +69,7 @@ class TestCircuitBreaker(unittest.TestCase):
 
     def test_circuitBreakerIsGivenMaxAttempts_getMaxAttemptsProperty_returnsRightMaxAttempts(
             self):
-        self.circuit_breaker = CircuitBreaker(max_attempts=100)
+        self.circuit_breaker = CircuitBreaker(failures=100)
 
         expected = 100
         actual = self.circuit_breaker.failure_threshold
@@ -79,7 +79,7 @@ class TestCircuitBreaker(unittest.TestCase):
     def test_circuitBreakerIsInitialized_circuitBreakerStatusIsClosed(self):
         self.circuit_breaker = CircuitBreaker()
 
-        expected = CircuitBreakerStatus.CLOSED
+        expected = CircuitBreakerStatus.closed
         actual = self.circuit_breaker.status
 
         self.assertEqual(expected, actual)

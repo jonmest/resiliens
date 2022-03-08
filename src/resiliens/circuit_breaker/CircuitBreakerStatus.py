@@ -6,15 +6,15 @@ class _CircuitBreakerStatus:
     _HALF_OPEN: str = 'HALF_OPEN'
 
     @property
-    def CLOSED(self) -> str:
+    def closed(self) -> str:
         return self._CLOSED
 
     @property
-    def OPEN(self) -> str:
+    def open(self) -> str:
         return self._OPEN
 
     @property
-    def HALF_OPEN(self) -> str:
+    def half_open(self) -> str:
         return self._HALF_OPEN
 
     def is_valid_status(self, status: str):

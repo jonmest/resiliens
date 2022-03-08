@@ -46,7 +46,7 @@ class CircuitBreakerClass:
         last_exception, *args, **kwargs))
         """
 
-        self._state = CircuitBreakerState(status=CircuitBreakerStatus.CLOSED,
+        self._state = CircuitBreakerState(status=CircuitBreakerStatus.closed,
                                           fail_count=0,
                                           last_failure=None,
                                           opened=monotonic())
@@ -61,8 +61,8 @@ class CircuitBreakerClass:
 
     @property
     def status(self):
-        if self._state.status == CircuitBreakerStatus.OPEN and self.open_seconds_remaining <= 0:
-            return CircuitBreakerStatus.HALF_OPEN
+        if self._state.status == CircuitBreakerStatus.open and self.open_seconds_remaining <= 0:
+            return CircuitBreakerStatus.half_open
         return self._state.status
 
     @property
@@ -86,11 +86,11 @@ class CircuitBreakerClass:
 
     @property
     def closed(self):
-        return self.status == CircuitBreakerStatus.CLOSED
+        return self.status == CircuitBreakerStatus.closed
 
     @property
     def opened(self):
-        return self.status == CircuitBreakerStatus.OPEN
+        return self.status == CircuitBreakerStatus.open
 
     @property
     def name(self):
@@ -157,7 +157,7 @@ class CircuitBreakerClass:
                 yield el
 
     def __call_succeeded(self) -> None:
-        self._state.status = CircuitBreakerStatus.CLOSED
+        self._state.status = CircuitBreakerStatus.closed
         self._state.last_failure = None
         self._state.fail_count = 0
         if self._sliding_window:
@@ -168,14 +168,14 @@ class CircuitBreakerClass:
         if self._sliding_window:
             self._sliding_window.add(False)
             if self._sliding_window.get_failure_count() >= self._failure_threshold:
-                self._state.status = CircuitBreakerStatus.OPEN
+                self._state.status = CircuitBreakerStatus.open
                 self._state.opened = monotonic()
         elif self._state.fail_count >= self._failure_threshold:
-            self._state.status = CircuitBreakerStatus.OPEN
+            self._state.status = CircuitBreakerStatus.open
             self._state.opened = monotonic()
 
     def force_open(self) -> None:
-        self._state.status = CircuitBreakerStatus.OPEN
+        self._state.status = CircuitBreakerStatus.open
         self._state.opened = monotonic()
 
     def force_reset(self) -> None:
