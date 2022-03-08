@@ -56,7 +56,8 @@ class CircuitBreakerClass:
         self._fallback_function = fallback_function
         self._fallback_function_with_exception = fallback_function_with_exception
         self._name = name
-        self._sliding_window = SlidingWindow(sliding_window_size) if sliding_window_size else None
+        self._sliding_window = SlidingWindow(
+            sliding_window_size) if sliding_window_size else None
 
     @property
     def status(self):
@@ -139,7 +140,8 @@ class CircuitBreakerClass:
                 if self.fallback_function:
                     return call(self.fallback_function, *args, **kwargs)
                 elif self._fallback_function_with_exception:
-                    return call(self._fallback_function_with_exception, (self.last_failure, *args), **kwargs)
+                    return call(self._fallback_function_with_exception,
+                                (self.last_failure, *args), **kwargs)
                 raise CircuitBreakerException(self)
             return call(function_to_decorate, *args, **kwargs)
 
