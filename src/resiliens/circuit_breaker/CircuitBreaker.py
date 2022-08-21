@@ -9,7 +9,7 @@ from types import TracebackType
 from typing import Union, Callable, Optional, Type, Any
 
 from .CircuitBreakerException import CircuitBreakerException
-from CircuitBreakerState import CircuitBreakerState
+from .CircuitBreakerState import CircuitBreakerState
 from .CircuitBreakerStatus import CircuitBreakerStatus
 from .SlidingWindow import SlidingWindow
 from .manager.CircuitBreakerManager import CircuitBreakerManager
