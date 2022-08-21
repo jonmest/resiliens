@@ -11,7 +11,8 @@ class CircuitBreakerState:
     last_failure: Any
     opened: float
 
-    def __init__(self, status: str,
+    def __init__(self,
+                 status: str,
                  fail_count: int = 0,
                  last_failure=None,
                  opened: float = 0):
