@@ -7,25 +7,25 @@ from typing import Callable, Type, Any
 
 class FallbackClass:
     fallback: Callable
-    fallback_exception: Callable
+    fallback_function: Callable
     expected_exception: Exception
 
     def __init__(self,
                  fallback: Callable = None,
-                 fallback_exception: Callable = None,
+                 fallback_function: Callable = None,
                  expected_exception: Type[BaseException] = Exception):
         self.fallback = fallback
-        self.fallback_exception = fallback_exception
+        self.fallback_function = fallback_function
         self._expected_exception = expected_exception
 
-        if not self.fallback and not self.fallback_exception:
+        if not self.fallback and not self.fallback_function:
             raise TypeError(
                 "Fallback decorator requires either a \"fallback\" or \"fallback_exception\" argument and "
                 "neither was given.")
         if self.fallback and not callable(self.fallback):
             raise TypeError(
                 "Argument \"fallback\" must be callable (i.e. a function)")
-        if self.fallback_exception and not callable(self.fallback_exception):
+        if self.fallback_function and not callable(self.fallback_function):
             raise TypeError(
                 "Argument \"fallback_exception\" must be callable (i.e. a function)"
             )
@@ -58,8 +58,8 @@ class FallbackClass:
             return call(function_to_decorate, *args, **kwargs)
         except Exception as e:
             if issubclass(e.__class__, self._expected_exception):
-                if self.fallback_exception:
-                    return call(self.fallback_exception, (e, *args), **kwargs)
+                if self.fallback_function:
+                    return call(self.fallback_function, (e, *args), **kwargs)
                 else:
                     return call(self.fallback, *args, **kwargs)
             else:
@@ -67,19 +67,19 @@ class FallbackClass:
 
 
 def WithFallback(fallback: Callable = None,
-                 fallback_exception: Callable = None,
-                 expected_exception: Type[BaseException] = Exception):
+                 fallback_function: Callable = None,
+                 for_exception: Type[BaseException] = Exception):
     """
     Provide a fallback function for the decorated function in case an exception is thrown. NOTE: The fallback
     function must take the same number of arguments as the decorated function. Optionally, the fallback function may
     take the thrown exception as a first argument, followed by the arguments of the decorated function - in that
     case, use the fallback_exception parameter to specify the fallback function.
     :param fallback: Reference to the fallback function - note that it needs to same function signature as the decorated function.
-    :param fallback_exception: Reference to the fallback function that takes the thrown exception as an additional argument
+    :param fallback_function: Reference to the fallback function that takes the thrown exception as an additional argument
     - note that it needs to same function signature as the decorated function.
-    :param expected_exception: Exception class you want to use fallback for. Default is the base Exception, but you may only want
+    :param for_exception: Exception class you want to use fallback for. Default is the base Exception, but you may only want
     to use the fallback for, say, IOError and in that case you should specify it here.
     """
     return FallbackClass(fallback=fallback,
-                         fallback_exception=fallback_exception,
-                         expected_exception=expected_exception)
+                         fallback_function=fallback_function,
+                         expected_exception=for_exception)

@@ -49,13 +49,13 @@ class TestFallback(unittest.TestCase):
             self):
 
         @WithFallback(fallback=self.method_fallback,
-                      expected_exception=IOError)
+                      for_exception=IOError)
         def bogus_function(_self):
             raise Exception()
 
         self.assertRaises(Exception, bogus_function)
 
-    @WithFallback(fallback=method_fallback, expected_exception=IOError)
+    @WithFallback(fallback=method_fallback, for_exception=IOError)
     def bogus_function(self):
         raise IOError()
 
