@@ -8,11 +8,11 @@ from time import monotonic
 from types import TracebackType
 from typing import Union, Callable, Optional, Type, Any
 
-from src.resiliens.circuit_breaker.CircuitBreakerException import CircuitBreakerException
-from src.resiliens.circuit_breaker.CircuitBreakerState import CircuitBreakerState
-from src.resiliens.circuit_breaker.CircuitBreakerStatus import CircuitBreakerStatus
-from src.resiliens.circuit_breaker.SlidingWindow import SlidingWindow
-from src.resiliens.circuit_breaker.manager.CircuitBreakerManager import CircuitBreakerManager
+from .CircuitBreakerException import CircuitBreakerException
+from CircuitBreakerState import CircuitBreakerState
+from .CircuitBreakerStatus import CircuitBreakerStatus
+from .SlidingWindow import SlidingWindow
+from .manager.CircuitBreakerManager import CircuitBreakerManager
 
 
 class CircuitBreakerClass:
