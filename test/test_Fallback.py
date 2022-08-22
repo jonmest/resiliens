@@ -48,8 +48,7 @@ class TestFallback(unittest.TestCase):
     def test_fallbackWithIOErrorAsExpected_regularExceptionIsThrown_fallbackNotCalled(
             self):
 
-        @WithFallback(fallback=self.method_fallback,
-                      for_exception=IOError)
+        @WithFallback(fallback=self.method_fallback, for_exception=IOError)
         def bogus_function(_self):
             raise Exception()
 
